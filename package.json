@@ -1,0 +1,9 @@
+{
+  "devDependencies": {
+    "aws-cdk-lib": "^2.103.1",
+    "constructs": "^10.3.0"
+  },
+  "scripts": {
+    "dev": "docker-compose build && docker-compose up"
+  }
+}
