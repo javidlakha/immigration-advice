@@ -64,11 +64,16 @@ the following documents as being potentially useful:
 """
 
 
-# TODO: provide useful information
+def prepare_documents(documents: list[str]) -> str:
+    """Prepares `documents` for use in the prompt."""
+    return "\n".join(f"<document>{d}</document>" for d in documents)
+
+
 def send_message(
     message: str,
     message_history: list[str],
     anthropic: Anthropic,
+    documents: list[str] = [],
 ) -> str:
     """Sends `message` using the Anthropic client and updates
     `message_history`.
@@ -80,7 +85,10 @@ def send_message(
             introduction=INTRODUCTION,
         )
         + "".join(message_history)
-        + USEFUL_INFORMATION.format(HUMAN_PROMPT=HUMAN_PROMPT, documents="")
+        + USEFUL_INFORMATION.format(
+            HUMAN_PROMPT=HUMAN_PROMPT,
+            documents=prepare_documents(documents),
+        )
         + HUMAN_PROMPT
         + message
         + AI_PROMPT
@@ -103,10 +111,8 @@ LANGUAGES = {
     "ar": {"language": "Arabic", "voice": "Google.ar-XA-Wavenet-B"},
     "bg": {"language": "Bulgarian", "voice": "Google.bg-BG-Standard-A"},
     "ca": {"language": "Catalan", "voice": "Google.ca-ES-Standard-A"},
-
     # TODO: Split Chinese into Cantonese and Mandarin
     "zh": {"language": "Chinese", "voice": "Google.cmn-CN-Wavenet-A"},
-
     "cs": {"language": "Czech", "voice": "Google.cs-CZ-Wavenet-A"},
     "da": {"language": "Danish", "voice": "Google.da-DK-Wavenet-C"},
     "nl": {"language": "Dutch", "voice": "Google.nl-NL-Wavenet-B"},
@@ -130,18 +136,14 @@ LANGUAGES = {
     "mr": {"language": "Marathi", "voice": "Google.mr-IN-Wavenet-A"},
     "no": {"language": "Norwegian", "voice": "Google.nb-NO-Wavenet-A"},
     "pl": {"language": "Polish", "voice": "Google.pl-PL-Wavenet-A"},
-
     # TODO: Split Portuguese into Brazilian and European
     "pt": {"language": "Portuguese", "voice": "Google.pt-BR-Wavenet-B"},
-
     "ro": {"language": "Romanian", "voice": "Google.ro-RO-Wavenet-A"},
     "ru": {"language": "Russian", "voice": "Google.ru-RU-Wavenet-A"},
     "sr": {"language": "Serbian", "voice": "Google.sr-RS-Standard-A"},
     "sk": {"language": "Slovak", "voice": "Google.sk-SK-Standard-A"},
-    
     # TODO: Split Mexican and Spanish
     "es": {"language": "Spanish", "voice": "Google.es-ES-Wavenet-B"},
-    
     "sv": {"language": "Swedish", "voice": "Google.sv-SE-Wavenet-A"},
     "ta": {"language": "Tamil", "voice": "Google.ta-IN-Wavenet-C"},
     "th": {"language": "Thai", "voice": "Google.th-TH-Standard-A"},
@@ -149,24 +151,23 @@ LANGUAGES = {
     "uk": {"language": "Ukrainian", "voice": "Google.uk-UA-Wavenet-A"},
     "vi": {"language": "Vietnamese", "voice": "Google.vi-VN-Wavenet-A"},
     "cy": {"language": "Welsh", "voice": "Polly.Gwyneth"},
-
     # Not supported by Twilio
-    #"hy": {"language": "Armenian", "voice": ""},
-    #"az": {"language": "Azerbaijani"},
-    #"be": {"language": "Belarusian"},
-    #"bs": {"language": "Bosnian"},
-    #"hr": {"language": "Croatian"},
-    #"et": {"language": "Estonian"},
-    #"kn": {"language": "Kannada"},
-    #"kk": {"language": "Kazakh"},
-    #"mk": {"language": "Macedonian"},
-    #"mi": {"language": "Maori"},
-    #"ne": {"language": "Nepali"},
-    #"fa": {"language": "Persian"},
-    #"sl": {"language": "Slovenian"},
-    #"sw": {"language": "Swahili"},
-    #"tl": {"language": "Tagalog"},
-    #"ur": {"language": "Urdu"},
+    # "hy": {"language": "Armenian", "voice": ""},
+    # "az": {"language": "Azerbaijani"},
+    # "be": {"language": "Belarusian"},
+    # "bs": {"language": "Bosnian"},
+    # "hr": {"language": "Croatian"},
+    # "et": {"language": "Estonian"},
+    # "kn": {"language": "Kannada"},
+    # "kk": {"language": "Kazakh"},
+    # "mk": {"language": "Macedonian"},
+    # "mi": {"language": "Maori"},
+    # "ne": {"language": "Nepali"},
+    # "fa": {"language": "Persian"},
+    # "sl": {"language": "Slovenian"},
+    # "sw": {"language": "Swahili"},
+    # "tl": {"language": "Tagalog"},
+    # "ur": {"language": "Urdu"},
 }
 
 

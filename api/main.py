@@ -5,16 +5,21 @@ from datetime import datetime
 import uvicorn
 from anthropic import Anthropic
 from fastapi import FastAPI, Form, Response, WebSocket, WebSocketDisconnect
+from pymongo.mongo_client import MongoClient
 from twilio.rest import Client
 from twilio.twiml.voice_response import Gather, Say, Start, Stop, VoiceResponse
 
 from constants import (
     ANTHROPIC_API_KEY,
+    EMBEDDINGS_FIELD,
+    MONGO_URI,
     NGROK_DOMAIN,
     TWILIO_ACCOUNT_SID,
     TWILIO_AUTH_TOKEN,
     TWILIO_PHONE_NUMBER,
+    VECTOR_SEARCH_INDEX,
 )
+from embeddings import vector_search
 from prompts import INTRODUCTION, get_language, get_speech, send_message
 from voice import transcribe_audio
 
@@ -22,6 +27,9 @@ DEFAULT_VOICE = "Google.en-GB-Wavenet-B"  # British English
 
 app = FastAPI()
 anthropic = Anthropic(api_key=ANTHROPIC_API_KEY)
+mongo = MongoClient(MONGO_URI)
+embeddings_database = mongo.embeddings_database
+collection = embeddings_database.embeddings
 twilio = Client(username=TWILIO_ACCOUNT_SID, password=TWILIO_AUTH_TOKEN)
 database = {}
 
@@ -91,14 +99,24 @@ async def respond(CallSid: str = Form()):
     while not transcript:
         continue
 
-    print(f"[{hms()}] Responding to message: '{transcript}'")
+    print(f"[{hms()}] Obtaining the most relevant documents from the database")
+    documents = vector_search(
+        query=transcript,
+        collection=collection,
+        index=VECTOR_SEARCH_INDEX,
+        path=EMBEDDINGS_FIELD,
+    )
+
     response = VoiceResponse()
+
+    print(f"[{hms()}] Responding to message: '{transcript}'")
 
     print(f"[{hms()}] Calling claude-instant-1")
     completion = send_message(
         message=transcript,
         message_history=database[CallSid]["message_history"],
         anthropic=anthropic,
+        documents=documents,
     )
     print(f"[{hms()}] Received the claude-instant-1 completion: '{completion}'")
 
@@ -157,6 +175,7 @@ async def status(CallSid: str = Form(), CallStatus: str = Form()) -> None:
             from_=TWILIO_PHONE_NUMBER,
             to=database[CallSid]["from"],
         )
+
 
 # TODO: handle SMS
 
