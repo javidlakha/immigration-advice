@@ -35,13 +35,18 @@ in a native voice.
 
 ## Installation
 
+You will need a [Twilio](https://www.twilio.com/) phone number.
+
 First, install
 
 * [AWS CDK](https://docs.aws.amazon.com/cdk/v2/guide/getting_started.html)
 * [Docker](https://docs.docker.com/engine/install/)
 * [Docker Compose](https://docs.docker.com/compose/install/)
 
-and then run
+Then populate `.env`. Make sure that `WEBHOOK_DOMAIN` corresponds to the
+webhook URLs in the Twilio console.
+
+Finally, run
 
 ```bash
 yarn install
@@ -59,7 +64,10 @@ The development server will be running in a container that can be accessed at
 [http://localhost:8000/](http://localhost:8000/). It supports hot reloading:
 changes made to the `api` directory will automatically be applied.
 
+To connect Twilio to the development server, use [ngrok](https://ngrok.com/).
 
 ```
-source .env && ngrok http --domain=$NGROK_DOMAIN 8000
+source .env && ngrok http --domain=$WEBHOOK_DOMAIN 8000
 ```
+
+where `WEBHOOK_DOMAIN` is obtained from ngrok and set in the Twilio console.

@@ -13,7 +13,7 @@ from constants import (
     ANTHROPIC_API_KEY,
     EMBEDDINGS_FIELD,
     MONGO_URI,
-    NGROK_DOMAIN,
+    WEBHOOK_DOMAIN,
     TWILIO_ACCOUNT_SID,
     TWILIO_AUTH_TOKEN,
     TWILIO_PHONE_NUMBER,
@@ -55,7 +55,7 @@ async def call(CallSid: str = Form(), From: str = Form()):
     say.prosody(greeting, rate="135%")
     response.append(say)
 
-    response.redirect(f"https://{NGROK_DOMAIN}/record", method="POST")
+    response.redirect(f"https://{WEBHOOK_DOMAIN}/record", method="POST")
     return Response(content=str(response), media_type="application/xml")
 
 
@@ -66,7 +66,7 @@ async def record(CallSid: str = Form()):
     database[CallSid]["transcripts"].append("")
 
     start = Start()
-    start.stream(url=f"wss://{NGROK_DOMAIN}/transcribe", name=CallSid)
+    start.stream(url=f"wss://{WEBHOOK_DOMAIN}/transcribe", name=CallSid)
     response.append(start)
     gather = Gather(
         action="/stop",
@@ -87,7 +87,7 @@ async def stop(CallSid: str = Form()):
     stop = Stop()
     stop.stream(name=CallSid)
     response.append(stop)
-    response.redirect(f"https://{NGROK_DOMAIN}/respond", method="POST")
+    response.redirect(f"https://{WEBHOOK_DOMAIN}/respond", method="POST")
     return Response(content=str(response), media_type="application/xml")
 
 
@@ -130,7 +130,7 @@ async def respond(CallSid: str = Form()):
         print(f"[{hms()}] Hanging up")
         response.hangup()
 
-    response.redirect(f"https://{NGROK_DOMAIN}/record", method="POST")
+    response.redirect(f"https://{WEBHOOK_DOMAIN}/record", method="POST")
     return Response(content=str(response), media_type="application/xml")
 
 
