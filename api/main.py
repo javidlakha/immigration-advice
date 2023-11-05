@@ -167,6 +167,7 @@ async def transcribe(websocket: WebSocket) -> None:
     database[call_sid]["transcripts"][-1] = transcribe_audio(chunks)
 
 
+# TODO: Send the transcript to a lawyer for review
 @app.post("/status")
 async def status(CallSid: str = Form(), CallStatus: str = Form()) -> None:
     if CallStatus == "completed":
