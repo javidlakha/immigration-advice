@@ -104,7 +104,7 @@ async def respond(CallSid: str = Form()):
         query=transcript,
         collection=collection,
         index=VECTOR_SEARCH_INDEX,
-        path=EMBEDDINGS_FIELD,
+        embeddings_field=EMBEDDINGS_FIELD,
     )
 
     response = VoiceResponse()
