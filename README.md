@@ -1,15 +1,15 @@
-# immigration-advice
+# karibu
 
 > DO NOT USE IN PRODUCTION WITHOUT THE SUPERVISION OF A QUALIFIED LAWYER
 
-Immigration Advice is a phone-based legal assistant that can take incoming
+Karibu is a phone-based legal assistant that can take incoming
 calls and understands and speaks many languages. It is connected to a database
 of legal advice.
 
-Immigration Advice is implemented using Twilio, Anthropic Claude, MongoDB Atlas
+Karibu is implemented using Twilio, Anthropic Claude, MongoDB Atlas
 Vector Search, Whisper and GCP's text-to-speech.
 
-Immigration Advice can understand
+Karibu can understand
 
 ```
 Afrikaans, Arabic, Armenian, Azerbaijani, Belarusian, Bosnian, Bulgarian,
